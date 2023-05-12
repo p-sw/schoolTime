@@ -1,0 +1,313 @@
+{% macro head(extras) %}
+    <head>
+        <title>스쿨타임</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jgthms/minireset.css@master/minireset.min.css">
+        <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.6/dist/web/static/pretendard.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Sunflower:wght@300;500;700&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                --pretendard-font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+                --sunflower-font-family: 'Sunflower', -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+
+                --primary-color: #3f3fff;
+                --secondary-color: #bfbfbf;
+            }
+            html {
+                font-family: var(--pretendard-font-family);
+                font-size: 16px;
+            }
+            input[type="text"], input[type="number"] {
+                width: 100%;
+                height: 100%;
+                --input-font-size: 16px;
+                font-size: var(--input-font-size);
+
+                padding: 0.6em 1em;
+
+                border-radius: 15px;
+                border: 1px solid #000000EE;
+
+                font-weight: 800;
+                font-family: var(--pretendard-font-family);
+            }
+            input[type="text"]::placeholder, input[type="number"]::placeholder {
+                font-family: var(--pretendard-font-family);
+                font-size: var(--input-font-size);
+                font-weight: 800;
+            }
+            input[type="checkbox"] {
+                appearance: none;
+                background-color: #dfe1e4;
+                border-radius: 72px;
+                border-style: none;
+                flex-shrink: 0;
+                height: 20px;
+                margin: 0;
+                position: relative;
+                width: 30px;
+            }
+            input[type="checkbox"]::before {
+                bottom: -6px;
+                content: "";
+                left: -6px;
+                position: absolute;
+                right: -6px;
+                top: -6px;
+            }
+            input[type="checkbox"],
+            input[type="checkbox"]::after {
+                transition: all 100ms ease-out;
+            }
+            input[type="checkbox"]::after {
+                background-color: #fff;
+                border-radius: 50%;
+                content: "";
+                height: 14px;
+                left: 3px;
+                position: absolute;
+                top: 3px;
+                width: 14px;
+            }
+            input[type=checkbox] {
+                cursor: default;
+            }
+            input[type="checkbox"]:hover {
+                background-color: #c9cbcd;
+                transition-duration: 0s;
+            }
+            input[type="checkbox"]:checked {
+                background-color: #6e79d6;
+            }
+            input[type="checkbox"]:checked::after {
+                background-color: #fff;
+                left: 13px;
+            }
+            input[type="checkbox"]:checked:hover {
+                background-color: #535db3;
+            }
+            /* width */::-webkit-scrollbar{width:5px;background-color:var(--secondary-color);}/* Track */::-webkit-scrollbar-track{background:var(--secondary-color);}/* Handle */::-webkit-scrollbar-thumb{background:var(--primary-color);}/* Handle on hover */::-webkit-scrollbar-thumb:hover{filter: brightness(50%);}
+        </style>
+        {{ extras }}
+    </head>
+{% endmacro %}
+
+{% macro flex() %}
+    <style>
+        *[s-flex] {
+            display: flex;
+        }
+        *[s-flex-row] {
+            flex-direction: row;
+        }
+        *[s-flex-col] {
+            flex-direction: column;
+        }
+        *[s-flex-justify="center"] {
+            justify-content: center;
+        }
+        *[s-flex-justify="start"] {
+            justify-content: flex-start;
+        }
+        *[s-flex-justify="end"] {
+            justify-content: flex-end;
+        }
+        *[s-flex-justify="between"] {
+            justify-content: space-between;
+        }
+        *[s-flex-justify="around"] {
+            justify-content: space-around;
+        }
+        *[s-flex-justify="evenly"] {
+            justify-content: space-evenly;
+        }
+        *[s-flex-align="center"] {
+            align-items: center;
+        }
+        *[s-flex-align="start"] {
+            align-items: flex-start;
+        }
+        *[s-flex-align="end"] {
+            align-items: flex-end;
+        }
+    </style>
+{% endmacro %}
+
+{% macro button() %}
+    <style>
+        button {
+            padding: 10px 20px;
+            border-radius: 14px;
+            background-color: var(--s-button-background-color);
+            border: none;
+            color: black;
+            font-family: var(--pretendard-font-family);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            filter: brightness(100%);
+            transition: filter;
+            transition-duration: 0.2s;
+        }
+        button:hover {
+            filter: brightness(80%);
+            transition: filter;
+            transition-duration: 0.2s;
+        }
+        button:active {
+            filter: brightness(50%);
+            transition: filter;
+            transition-duration: 0.2s;
+        }
+        button[s-sm] {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        button[s-md] {
+            padding: 12px 25px;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        button[s-lg] {
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        button[s-sm-flat] {
+            padding: 10px 10px;
+        }
+        button[s-md-flat] {
+            padding: 12px 12px;
+        }
+        button[s-lg-flat] {
+            padding: 15px 15px;
+        }
+        button[s-primary] {
+            --s-button-background-color: var(--primary-color);
+            color: white;
+        }
+        button[s-secondary] {
+            --s-button-background-color: var(--secondary-color);
+        }
+        button[s-cancel] {
+            --s-button-background-color: #ff3333;
+        }
+        button[s-ok] {
+            --s-button-background-color: #33ff33;
+        }
+        button[s-bare] {
+            --s-button-background-color: transparent;
+            color: black;
+        }
+        button[s-bare]:hover {
+            text-decoration: underline black;
+        }
+    </style>
+{% endmacro %}
+
+{% macro placeholder() %}
+    <style>
+        *[s-placeholder] {
+            position: relative;
+            visibility: hidden;
+        }
+        @keyframes placeholder {
+            0% {
+                opacity: 0.1;
+            }
+            100% {
+                opacity: 0.5;
+            }
+        }
+        *[s-placeholder]::after {
+            content: '';
+            display: inline-block;
+            visibility: visible;
+
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+
+            border-radius: 8px;
+            border: none;
+            background-color: #000;
+            opacity: 0.1;
+
+            animation-duration: 0.6s;
+            animation-iteration-count: infinite;
+            animation-direction: alternate;
+            animation-name: placeholder;
+            animation-timing-function: ease-in-out;
+        }
+        *[s-placeholder][s-placeholder-error]::after {
+            animation-iteration-count: 0;
+            background-color: #ff3333;
+            opacity: 0.8;
+        }
+    </style>
+{% endmacro %}
+
+{% macro table() %}
+    <style>
+        td, tr {
+            border: 1px solid var(--table-color);
+        }
+        tr {
+            border-left: none;
+            border-right: none;
+        }
+        td:first-child {
+            border-left: none;
+        }
+        td:last-child {
+            border-right: none;
+        }
+        tr:first-child {
+            border-top: none;
+        }
+        tr:first-child td {
+            border-top: none;
+        }
+        tr:last-child {
+            border-bottom: none;
+        }
+        td:last-child {
+            border-bottom: none;
+        }
+        table {
+            border-collapse: collapse;
+
+            border-radius: 10px;
+
+            background-color: var(--primary-color);
+
+            font-family: var(--pretendard-font-family);
+            font-size: 16px;
+            font-weight: 600;
+
+            --table-color: #ffffffaa;
+            color: var(--table-color);
+
+            width: 100%;
+            height: 100%;
+        }
+
+        th {
+            text-align: center;
+            min-width: 50px;
+            width: 85px;
+        }
+
+        td {
+            text-align: center;
+            min-width: 50px;
+        }
+    </style>
+{% endmacro %}

@@ -1,0 +1,91 @@
+{% import "_svgs.html" as svg %}
+{% import "_styles.html" as styles %}
+
+{% macro head_extra() %}
+    {{ styles.button() }}
+    {{ styles.flex() }}
+    <style>
+        @media (max-width: 900px) {
+            section header {
+                flex-direction: column-reverse !important;
+                justify-content: center !important;
+
+                gap: 50px;
+            }
+
+            section#a header div[s-flex] {
+                align-items: center;
+                text-align: center;
+            }
+        }
+        section {
+            width: 100%;
+            height: 100vh;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        section header {
+            width: 80%;
+            height: 25%;
+
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        section header h1, section header h2 {
+            font-family: var(--sunflower-font-family);
+        }
+
+        section header h1 {
+            width: 100%;
+            height: 50%;
+            font-size: 2rem;
+        }
+
+        section header h2 {
+            width: 100%;
+            height: 50%;
+            font-size: 1.75rem;
+        }
+
+        div.buttons {
+            margin-top: 10px;
+            padding-left: 5px;
+        }
+    </style>
+{% endmacro %}
+
+<!DOCTYPE html>
+<html lang="ko">
+{{ styles.head(head_extra()) }}
+<body>
+    <section id="a">
+        <header>
+            <div s-flex s-flex-col s-flex-justify="center">
+                <h1>
+                    {{ svg.container(svg.school(), "inline-block") }}
+                    편해진 학교 시간표
+                </h1>
+                <h2>
+                    지금 스쿨타임에서 만나보세요!
+                </h2>
+                <div class="buttons">
+                    <button s-primary s-md id="start">시작하기</button>
+                </div>
+            </div>
+            <img src="/static/timetable.jpg" alt="Timetable" style="width:50%;height:auto;" />
+        </header>
+    </section>
+    <script>
+        document.getElementById("start").addEventListener("click", () => {
+            window.location.href = "/search"
+        })
+    </script>
+</body>
+</html>

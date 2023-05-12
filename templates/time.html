@@ -1,0 +1,594 @@
+{% import "_styles.html" as styles %}
+{% import "_toast.html" as toast %}
+{% import "_svgs.html" as svgs %}
+{% import "_cookie.html" as cookie %}
+
+{% macro head_extra() %}
+    {{ styles.placeholder() }}
+    {{ styles.button() }}
+    {{ styles.flex() }}
+    {{ styles.table() }}
+    <style>
+
+        @media (max-width: 1000px) {
+            .box {
+                grid-template-columns: 100% !important;
+                grid-template-rows: 30px 80px 500px 500px !important;
+            }
+            .box div.todaymeal {
+                grid-row: 4 !important;
+                grid-column: 1 !important;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .box div.todaymeal div.time h1 {
+                font-size: 25px;
+            }
+        }
+
+        .box {
+            margin: 20px auto;
+
+            width: 95vw;
+            max-width: 1000px;
+
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 30px 80px 500px;
+
+            grid-row-gap: 20px;
+            grid-column-gap: 20px;
+        }
+
+        .box div.toolbar {
+            grid-row: 1;
+            grid-column-start: 1;
+            grid-column-end: 3;
+
+            font-size: 16px;
+
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .box h1 {
+            font-family: var(--pretendard-font-family);
+            font-size: 2rem;
+            font-weight: 700;
+
+            grid-row: 2;
+            grid-column-start: 1;
+            grid-column-end: 3;
+        }
+
+        .box div.timetable {
+            grid-row: 3;
+            grid-column: 1;
+        }
+
+        .box div.timetable div.control {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            width: 100%;
+            height: 80px;
+        }
+
+        .box div.timetable div.control div.time {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            height: 40px;
+        }
+
+        .box div.timetable div.control div.gc {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 40px;
+            gap: 5px;
+        }
+
+        div.gc input {
+            width: 60px;
+            height: 35px;
+        }
+
+        .box div.todaymeal {
+            grid-row: 3;
+            grid-column: 2;
+
+            display: flex;
+            flex-direction: column;
+
+            background-color: var(--primary-color);
+
+            border-radius: 10px;
+            border: none;
+
+            text-align: center;
+
+            padding: 10px;
+
+            color: white;
+        }
+
+        .box div.todaymeal div.time {
+            width: 100%;
+
+            display: flex;
+            flex-direction: row;
+
+            justify-content: space-between;
+            align-items: center;
+
+            height: 40px;
+        }
+
+        .box div.todaymeal h1 {
+            width: 100%;
+            height: 40px;
+            font-size: 35px;
+        }
+
+        .box div.todaymeal h2 {
+            width: 100%;
+            height: 30px;
+
+            margin-bottom: 10px;
+
+            font-size: 20px;
+
+            font-weight: 800;
+        }
+
+        .box div.todaymeal div.mealcontainer {
+            width: 100%;
+            height: calc(100% - 120px);
+
+            margin-bottom: 10px;
+        }
+
+        .box div.todaymeal div.bottools {
+            width: 100%;
+            height: 30px;
+
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+
+            gap: 10px;
+        }
+
+        .box div.todaymeal div.mealcontainer ul {
+            width: 80%;
+            height: 100%;
+
+            margin: 0 auto;
+        }
+
+        .box div.todaymeal div.mealcontainer ul li {
+            width: 100%;
+
+            font-weight: 600;
+
+            margin-top: 10px;
+            line-height: 28px;
+        }
+
+        .box div.todaymeal div.mealcontainer ul li span {
+            background-color: orange;
+            margin: 0 4px;
+            padding: 2px 4px;
+            border-radius: 10px;
+            border: none;
+            white-space: nowrap;
+        }
+    </style>
+{% endmacro %}
+
+<!DOCTYPE html>
+<html lang="ko">
+    {{ styles.head(head_extra()) }}
+    <body>
+        <div class="box">
+            <div class="toolbar">
+                <button s-bare s-sm s-flex s-flex-row s-flex-align="center" onclick="window.history.back()">
+                    {{ svgs.container(svgs.back_arrow(), display="inline-block", size=[16, 16], extra_style="margin-right:5px;") }} 뒤로 가기
+                </button>
+                <button s-bare s-sm s-flex s-flex-row s-flex-align="center" onclick="window.location.href = '/search'">
+                    {{ svgs.container(svgs.search(), display="inline-block", size=[16, 16], extra_style="margin-right: 5px;") }} 학교 검색
+                </button>
+            </div>
+            <h1 s-placeholder></h1>
+            <div class="timetable" s-placeholder>
+                <div class="control">
+                    <div class="gc">
+                        <input type="number" id="grade" value="1"><label for="grade">학년</label>
+                        <input type="number" id="class" value="1"><label for="class">반</label>
+                    </div>
+                    <div class="time">
+                        <button s-bare s-sm s-flex s-flex-row s-flex-align="center" onclick="tc.onBeforeWeekClick()">
+                            {{ svgs.container(svgs.back_arrow(), size=[16, 16]) }}
+                        </button>
+                        <p>이번 주</p>
+                        <button s-bare s-sm s-flex s-flex-row s-flex-align="center" onclick="tc.onAfterWeekClick()">
+                            {{ svgs.container(svgs.front_arrow(), size=[16, 16]) }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="todaymeal">
+                <div class="time">
+                    <button s-bare s-sm s-flex s-flex-row s-flex-align="center" onclick="ms.onYesterday()" data-role="yesterday">
+                        {{ svgs.container(svgs.back_arrow(), size=[16, 16]) }}
+                    </button>
+                    <h1>오늘의 급식</h1>
+                    <button s-bare s-sm s-flex s-flex-row s-flex-align="center" onclick="ms.onTomorrow()" data-role="tomorrow">
+                        {{ svgs.container(svgs.front_arrow(), size=[16, 16]) }}
+                    </button>
+                </div>
+                <h2 id="todaymealname" s-placeholder></h2>
+                <div class="mealcontainer" s-placeholder>
+                    <ul></ul>
+                </div>
+                <div class="bottools">
+                    <input type="checkbox" id="showallergy" checked onchange="ms.init();ms.parseMealInfo()">
+                    <label for="showallergy">알러지 정보 보이기</label>
+                </div>
+            </div>
+        </div>
+        {{ cookie.cookiescript() }}
+        {{ toast.toaster() }}
+        <script>
+            class Timetable {
+                fromTime;
+                toTime;
+                grade;
+                class_;
+
+                weekday = {"Mon": 1, "Tue": 2, "Wed": 3, "Thu": 4, "Fri": 5}
+                weekdayArray = ["월", "화", "수", "목", "금"]
+
+                apiUrlBuilder() {
+                    return (
+                        `/api/timetable?sg=${getCookie("schoolKind")}&egc=${getCookie("eduGovernCode")}&sc=${getCookie("schoolCode")}`
+                        + ( this.fromTime && this.toTime ? `&ft=${this.fromTime}&tt=${this.toTime}` : "" )
+                        + ( this.grade ? `&g=${this.grade}` : "" )
+                        + ( this.class_ ? `&c=${this.class_}` : "" )
+                    )
+                }
+
+                updateTimeTable() {
+                    this.timetable = Array(8).fill(0).map(_ => document.createElement("tr")) // init
+
+                    document.querySelector(".box div.timetable").setAttribute("s-placeholder", "")
+
+                    fetch(
+                        this.apiUrlBuilder(),
+                        {method: "GET"}
+                    ).then(res => {
+                        return res.json()
+                    }).then(data => {
+                        if (data["error"] === true) {
+                            makeToast("error", "Error while loading timetable", data["reason"])
+                            document.querySelector(".box div.timetable").setAttribute("s-placeholder-error", "")
+                            throw Error()
+                        } else {
+                            if (this.grade) {
+                                setCookie("grade", this.grade, 365);
+                            }
+                            if (this.class_) {
+                                setCookie("class", this.class_, 365);
+                            }
+                            return data["data"]
+                        }
+                    }).then(data => {
+                        let titlebox = document.querySelector(".box h1")
+                        try {
+                            titlebox.removeAttribute("s-placeholder")
+                        } catch (e) {
+
+                        }
+                        titlebox.textContent = data[0]["SCHUL_NM"]
+                        for (let [index, item] of this.timetable.entries()) {
+                            let head = document.createElement("th")
+                            head.textContent = `${index+1}교시`
+                            head.style.setProperty("order", "0")
+                            item.appendChild(head)
+                        }
+                        return data
+                    }).then(datas => {
+                        for (let data of datas) {
+                            let date = new Date(parseInt(data["ALL_TI_YMD"].slice(0, 4)), parseInt(data["ALL_TI_YMD"].slice(4, 6))-1, parseInt(data["ALL_TI_YMD"].slice(6, 8)))
+                            let item = document.createElement("td")
+                            item.textContent = data["ITRT_CNTNT"]
+                            item.style.setProperty("order", this.weekday[date.toLocaleDateString("en-US", {"weekday": "short"})])
+                            this.timetable[parseInt(data["PERIO"])-1].appendChild(item)
+                        }
+                        return datas
+                    }).then(data => {
+                        let table = document.createElement("table")
+                        table.style.setProperty("width", "100%")
+                        table.style.setProperty("height", "calc(100% - 80px)")
+                        let theadr = document.createElement("tr")
+                        theadr.appendChild(document.createElement("th"))
+                        for (let i of this.weekdayArray) {
+                            let n = document.createElement("th")
+                            n.textContent = i
+                            theadr.appendChild(n)
+                        }
+                        table.appendChild(theadr);
+                        this.timetable.forEach((r, i) => {
+                            [...Array(5).keys()].map(x => x+1).forEach(y => {
+                                if (Array.from(r.childNodes).filter(a => a.tagName !== "TH" && a.style.order === y.toString()).length === 0) {
+                                    let e = document.createElement("td")
+                                    e.style.order = y.toString()
+                                    this.timetable[i].appendChild(e)
+                                }
+                            })
+                        })
+                        for (let row of this.timetable) {
+                            table.appendChild(row)
+                        }
+                        let tt = document.querySelector("div.timetable")
+                        try {
+                            tt.removeAttribute("s-placeholder")
+                        } catch (e) {
+
+                        }
+                        if (tt.childElementCount > 1) {
+                            tt.removeChild(tt.lastChild)
+                        }
+                        tt.appendChild(table)
+                        return data
+                    }).catch()
+                }
+            }
+        </script>
+        <script>
+            class TimetableControl {
+                offset = 0
+
+                fromTime;
+                toTime;
+
+                constructor() {
+                    let gradeInput = document.querySelector("#grade")
+                    gradeInput.addEventListener("change", (e) => {
+                        this.onGradeChange(e)
+                    })
+                    if (checkCookie("grade")) {
+                        gradeInput.value = getCookie("grade", "1")
+                    }
+                    let classInput = document.querySelector("#class")
+                    classInput.addEventListener("change", (e) => {
+                        this.onClassChange(e)
+                    })
+                    if (checkCookie("class")) {
+                        classInput.value = getCookie("class", "1")
+                    }
+                    this.timetable = new Timetable()
+                    this.timetable.grade = getCookie("grade", "1")
+                    this.timetable.class_ = getCookie("class", "1")
+                    this.triggerRecalculateDate()
+                }
+
+                /** @param {Date} date */
+                makeWeekMon(date) {
+                    let weekdayOffset = {"Mon": 0, "Tue": 1, "Wed": 2, "Thu": 3, "Fri": 4, "Sat": 5, "Sun": 6}
+                    let weekdayName = date.toLocaleDateString("en-US", {weekday: "short"})
+                    if (weekdayName === "Mon") {
+                        return
+                    }
+                    date.setDate((date.getDate()+7*this.offset) - weekdayOffset[weekdayName])
+                }
+
+                /** @param {Date} date */
+                makeWeekFri(date) {
+                    let weekdayOffset = {"Mon": 4, "Tue": 3, "Wed": 2, "Thu": 1, "Fri": 0, "Sat": -1, "Sun": -2}
+                    let weekdayName = date.toLocaleDateString("en-US", {weekday: "short"})
+                    if (weekdayName === "Fri") {
+                        return
+                    }
+                    date.setDate((date.getDate()+7*this.offset) + weekdayOffset[weekdayName])
+                }
+
+                formatDate(date) {
+                    return `${date.getFullYear()}` +
+                        `${(date.getMonth()+1).toString().length === 1 ? "0"+(date.getMonth()+1) : date.getMonth() + 1}` +
+                        `${date.getDate().toString().length === 1 ? "0"+date.getDate() : date.getDate()}`
+                }
+
+                triggerRecalculateDate() {
+                    let weekOffsetDisplay = document.querySelector(".box div.timetable div.control div.time p")
+                    if (this.offset === 0) {
+                        weekOffsetDisplay.textContent = "이번 주";
+                    } else if (this.offset > 0) {
+                        weekOffsetDisplay.textContent = `${this.offset}주 후`
+                    } else if (this.offset < 0) {
+                        weekOffsetDisplay.textContent = `${-this.offset}주 전`
+                    }
+
+                    this.fromTime = new Date()
+                    this.toTime = new Date()
+                    this.makeWeekMon(this.fromTime)
+                    this.makeWeekFri(this.toTime)
+                    this.timetable.fromTime = this.formatDate(this.fromTime);
+                    this.timetable.toTime = this.formatDate(this.toTime);
+                    this.triggerReload()
+                }
+
+                triggerReload() {
+                    this.timetable.updateTimeTable()
+                }
+
+                onBeforeWeekClick() {
+                    this.offset--
+                    this.triggerRecalculateDate()
+                }
+
+                onAfterWeekClick() {
+                    this.offset++
+                    this.triggerRecalculateDate()
+                }
+
+                onGradeChange(e) {
+                    this.timetable.grade = e.target.value
+                    this.triggerReload()
+                }
+
+                onClassChange(e) {
+                    this.timetable.class_ = e.target.value
+                    this.triggerReload()
+                }
+            }
+
+            let tc = new TimetableControl()
+        </script>
+        <script>
+            class Meal {
+                offset = 0
+
+                allergics = {
+                    1: "난류",
+                    2: "우유",
+                    3: "메밀",
+                    4: "땅콩",
+                    5: "대두",
+                    6: "밀",
+                    7: "고등어",
+                    8: "게",
+                    9: "새우",
+                    10: "돼지고기",
+                    11: "복숭아",
+                    12: "토마토",
+                    13: "아황산염",
+                    14: "호두",
+                    15: "닭고기",
+                    16: "쇠고기",
+                    17: "오징어",
+                    18: "조개류"
+                }
+
+                menus = []
+
+                constructor() {
+                    this.updateMealInfo()
+                }
+
+                init() {
+                    document.querySelector(".box div.todaymeal h2").textContent = "데이터 없음"
+                    document.querySelector(".box div.todaymeal div.mealcontainer ul").textContent = ""
+                }
+
+                apiUrlBuilder() {
+                    let date = new Date()
+                    date.setDate(date.getDate() + this.offset)
+                    let datestr = this.formatDate(date)
+
+                    return (
+                        `/api/meal?egc=${getCookie("eduGovernCode")}&sc=${getCookie("schoolCode")}`+
+                        (this.offset !== 0 ? `&date=${datestr}` : "")
+                    )
+                }
+
+                formatDate(date) {
+                    return `${date.getFullYear()}` +
+                        `${(date.getMonth()+1).toString().length === 1 ? "0"+(date.getMonth()+1) : date.getMonth() + 1}` +
+                        `${date.getDate().toString().length === 1 ? "0"+date.getDate() : date.getDate()}`
+                }
+
+                onYesterday() {
+                    this.offset--;
+                    this.updateMealInfo()
+                }
+
+                onTomorrow() {
+                    this.offset++;
+                    this.updateMealInfo()
+                }
+
+                parseMealInfo() {
+                    let parseAllergy = document.querySelector("#showallergy").checked
+                    this.menus.split("<br/>").forEach(menu => {
+                        let m = /(?<mealname>.*?)-?\s+-?\s*(?<allergies>\([\d.]+\))?/.exec(menu)
+                        let menuName = m.groups.mealname
+                        let menuAllergic = m.groups.allergies
+                        let listitem = document.createElement("li")
+                        listitem.textContent = menuName
+
+                        if (parseAllergy && menuAllergic && menuAllergic.includes("(")) {
+                            menuAllergic.split(".").map(x => x.replace("(", "").replace(")", "").replace(" ", "")).forEach(allergicInt => {
+                                let aAlert = document.createElement("span")
+                                aAlert.textContent = this.allergics[allergicInt]
+                                if (aAlert.textContent.length > 0) {
+                                    listitem.appendChild(aAlert)
+                                }
+                            })
+                        }
+
+                        document.querySelector(".box div.todaymeal div.mealcontainer ul").appendChild(listitem)
+                    })
+                }
+
+                updateMealInfo() {
+                    let mealdate = document.querySelector(".box div.todaymeal h1")
+                    if (this.offset === 0) {
+                        mealdate.textContent = "오늘의 급식"
+                    }
+                    else if (this.offset === 1) {
+                        mealdate.textContent = "내일의 급식"
+                    }
+                    else if (this.offset === -1) {
+                        mealdate.textContent = "어제의 급식"
+                    }
+                    else {
+                        let d = new Date()
+                        d.setDate(d.getDate() + this.offset)
+                        mealdate.textContent = `${d.getMonth()+1}월 ${d.getDate()}일의 급식`
+                    }
+
+                    let mealname = document.querySelector(".box div.todaymeal h2")
+                    let mealcontainer = document.querySelector(".box div.todaymeal div.mealcontainer")
+                    mealname.setAttribute("s-placeholder", "")
+                    mealcontainer.setAttribute("s-placeholder", "")
+
+                    fetch(this.apiUrlBuilder()).then(res => {
+                        return res.json()
+                    }).then(data => {
+                        if (data["error"] === true) {
+                            makeToast("error", "Error while loading meal info", data["reason"])
+                            mealname.setAttribute("s-placeholder-error", "")
+                            mealcontainer.setAttribute("s-placeholder-error", "")
+                            throw Error()
+                        } else {
+                            mealname.textContent = "데이터 없음"
+                            document.querySelector(".box div.todaymeal div.mealcontainer ul").textContent = ""
+                            return data["data"]
+                        }
+                    }).then(data => {
+                        if (data.length > 0) {
+                            mealname.textContent = data[0]["MMEAL_SC_NM"]
+                            this.menus = data[0]["DDISH_NM"]
+                            this.parseMealInfo()
+                        }
+                        mealname.removeAttribute("s-placeholder")
+                        mealcontainer.removeAttribute("s-placeholder")
+                    })
+                }
+            }
+
+            let ms = new Meal()
+        </script>
+    </body>
+</html>

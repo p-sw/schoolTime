@@ -1,0 +1,124 @@
+{% macro toaster() %}
+    <style>
+        div#toaster {
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 15px;
+
+            position: fixed;
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+
+            bottom: 10px;
+            right: 10px;
+
+            pointer-events: none;
+        }
+
+        div#toaster div.toast {
+            display: grid;
+            grid-template-rows: 50px 1fr;
+            grid-template-columns: 50px 1fr;
+            grid-row-gap: 15px;
+            grid-column-gap: 10px;
+
+            padding: 15px;
+            border-radius: 20px;
+
+            opacity: 1;
+        }
+
+        div#toaster div.toast.dead {
+            opacity: 0;
+
+            transition: opacity;
+            transition-duration: 0.8s;
+            transition-timing-function: ease-in;
+        }
+
+        div#toaster div.toast span {
+            display: inline-block;
+            grid-row: 1;
+            grid-column: 1;
+        }
+
+        div#toaster div.toast h1 {
+            grid-row: 1;
+            grid-column: 2;
+
+            font-family: var(--pretendard-font-family);
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+
+        div#toaster div.toast p {
+            display: flex;
+
+            grid-row: 2;
+            grid-column-start: 1;
+            grid-column-end: 3;
+
+            font-family: var(--pretendard-font-family);
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        div#toaster div.toast.info {
+            background-color: #9f9fffaa;
+        }
+
+        div#toaster div.toast.success {
+            background-color: #00dd00aa;
+        }
+
+        div#toaster div.toast.warning {
+            background-color: #ffff00aa;
+        }
+
+        div#toaster div.toast.error {
+            background-color: #ff0000aa;
+        }
+    </style>
+    <script>
+        (() => {
+            let n = document.createElement("div")
+            n.id = "toaster"
+            document.getElementsByTagName("body")[0].appendChild(n)
+        })()
+        /** @param mode string, "info" "success" "warning" "error"
+         * @param title string, title
+         * @param content string, content*/
+        function makeToast(mode, title, content="") {
+            let toaster = document.getElementById("toaster")
+
+            let toast = document.createElement("div")
+            toast.classList.add("toast")
+            toast.classList.add(mode)
+
+            let toastIcon = document.createElement("span")
+            let toastIconImage = document.createElement("img")
+            toastIconImage.src = "/static/"+mode+".svg"
+            toastIconImage.style = "width:auto;height:auto;"
+            toastIcon.appendChild(toastIconImage)
+            toast.appendChild(toastIcon)
+
+            let toastTitle = document.createElement("h1")
+            toastTitle.style = "display:flex;flex-direction:row;align-items:center;"
+            toastTitle.innerText = title
+            toast.appendChild(toastTitle)
+
+            let toastContent = document.createElement("p")
+            toastContent.innerText = content
+            toast.appendChild(toastContent)
+
+            toaster.appendChild(toast)
+            setTimeout(() => {killToast(toast)}, 3000)
+        }
+        /** @param {HTMLDivElement} toast */
+        function killToast(toast) {
+            toast.classList.add("dead");
+            setTimeout(() => {toast.remove()}, 800);
+        }
+    </script>
+{% endmacro %}

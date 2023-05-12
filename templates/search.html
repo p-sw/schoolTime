@@ -1,0 +1,179 @@
+{% import "_styles.html" as styles %}
+{% import "_svgs.html" as svgs %}
+{% import "_toast.html" as toast %}
+{% import "_cookie.html" as cookie %}
+
+{% macro head_extra() %}
+    {{ styles.button() }}
+    <style>
+        div.box {
+            margin: 25px auto 0;
+
+            width: 90%;
+            max-width: 800px;
+        }
+
+        div.search {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+
+            width: 100%;
+            height: 10vh;
+
+            font-family: var(--pretendard-font-family);
+        }
+
+        div.search label {
+            font-size: 1.2rem;
+            font-weight: 400;
+        }
+
+        div.search div.formitem {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+
+            width: 100%;
+            height: 45px;
+
+            padding: 2px 0;
+
+            gap: 3px;
+        }
+
+        div.search div.formitem input[type="text"] {
+            --input-font-size: 16px;
+        }
+
+        div.result {
+            width: 100%;
+            height: 100%;
+
+            border-top: 3px solid #00000066;
+
+            margin-top: 10px;
+            padding-top: 10px;
+            margin-bottom: 20px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            row-gap: 8px;
+
+            font-family: var(--sunflower-font-family);
+        }
+
+        div.result div {
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #00000066;
+            background-color: #1d7bef;
+            color: #fff;
+            box-shadow: 0 10px 25px 10px inset rgba(255, 255, 255, 0.12);
+            transition: filter;
+            transition-duration: 0.2s;
+            transition-timing-function: ease-in-out;
+            width: 100%;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        div.result div:hover {
+            filter: brightness(80%);
+            transition: filter;
+            transition-duration: 0.2s;
+            transition-timing-function: ease-in-out;
+        }
+
+        div.result div span:first-child {
+            font-size: 1rem;
+            font-weight: 300;
+        }
+
+        div.result div h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        div.result div span:last-child {
+            font-size: 1.2rem;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+    </style>
+{% endmacro %}
+
+<!DOCTYPE html>
+<html lang="ko">
+    {{ styles.head(head_extra()) }}
+    <body>
+        <div class="box">
+            <div class="search">
+                <label for="sch">학교 검색</label>
+                <div class="formitem">
+                    <input type="text" id="sch" name="sch" placeholder="학교명을 입력해주세요!" />
+                    <button s-primary s-sm s-sm-flat id="schquery">
+                        {{ svgs.container(svgs.search("#ffffff"), size=[25, 25]) }}
+                    </button>
+                </div>
+            </div>
+            <div class="result">
+                <p>자신의 학교 이름을 검색해보세요.</p>
+            </div>
+        </div>
+        {{ toast.toaster() }}
+        {{ cookie.asynccookiescript() }}
+        <script>
+            document.getElementById("schquery").addEventListener("click", async () => {
+                document.querySelector("#schquery").disabled = true
+                await fetch("/api/school?name="+document.getElementById("sch").value, {
+                    method: "GET"
+                }).then(res => {
+                    document.querySelector("#schquery").disabled = false
+                    return res.json()
+                }).then(data => {
+                    if (data["error"] === true) {
+                        makeToast("error", "Error while searching", data["reason"])
+                        throw Error("")
+                    }
+                    return data["data"]
+                }).then(data => {
+                    let result = document.querySelector(".result")
+                    result.innerHTML = ""
+                    for (let item of data) {
+                        let school = document.createElement("div")
+                        let schoolLevel = document.createElement("span")
+                        schoolLevel.innerText = item["SCHUL_KND_SC_NM"]
+                        let schoolName = document.createElement("h1")
+                        schoolName.innerText = item["SCHUL_NM"]
+                        let schoolAddress = document.createElement("span")
+                        schoolAddress.innerText = item["ORG_RDNMA"]
+                        school.appendChild(schoolLevel)
+                        school.appendChild(schoolName)
+                        school.appendChild(schoolAddress)
+
+                        school.dataset.schoolKind = item["SCHUL_KND_SC_NM"]
+                        school.dataset.eduGovernCode = item["ATPT_OFCDC_SC_CODE"]
+                        school.dataset.schoolCode = item["SD_SCHUL_CODE"]
+
+                        school.addEventListener("click", (e) => {
+                            Promise.all([
+                                setCookie("schoolKind", e.currentTarget.dataset.schoolKind, 365),
+                                setCookie("eduGovernCode", e.currentTarget.dataset.eduGovernCode, 365),
+                                setCookie("schoolCode", e.currentTarget.dataset.schoolCode, 365)
+                            ]).then(() => {
+                                window.location.href = "/time"
+                            })
+                        })
+                        result.appendChild(school)
+                    }
+                }).catch(() => {})
+            })
+        </script>
+    </body>
+</html>
