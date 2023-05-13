@@ -263,9 +263,11 @@
                 weekday = {"Mon": 1, "Tue": 2, "Wed": 3, "Thu": 4, "Fri": 5}
                 weekdayArray = ["월", "화", "수", "목", "금"]
 
+                schoolKind = {"elementary": "초등학교", "middle": "중학교", "high": "고등학교"}
+
                 apiUrlBuilder() {
                     return (
-                        `/api/timetable?sg=${getCookie("schoolKind")}&egc=${getCookie("eduGovernCode")}&sc=${getCookie("schoolCode")}`
+                        `/api/timetable?sg=${this.schoolKind[getCookie("schoolKind")]}&egc=${getCookie("eduGovernCode")}&sc=${getCookie("schoolCode")}`
                         + ( this.fromTime && this.toTime ? `&ft=${this.fromTime}&tt=${this.toTime}` : "" )
                         + ( this.grade ? `&g=${this.grade}` : "" )
                         + ( this.class_ ? `&c=${this.class_}` : "" )
