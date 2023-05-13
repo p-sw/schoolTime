@@ -221,7 +221,7 @@
                 </button>
             </div>
             <h1 s-placeholder></h1>
-            <div class="timetable" s-placeholder>
+            <div class="timetable">
                 <div class="control">
                     <div class="gc">
                         <input type="number" id="grade" value="1"><label for="grade">학년</label>
@@ -237,6 +237,9 @@
                         </button>
                     </div>
                 </div>
+                <table s-placeholder style="width:100%;height:calc(100% - 80px);">
+
+                </table>
             </div>
             <div class="todaymeal">
                 <div class="time">
@@ -282,7 +285,8 @@
                 updateTimeTable() {
                     this.timetable = Array(8).fill(0).map(_ => document.createElement("tr")) // init
 
-                    document.querySelector(".box div.timetable").setAttribute("s-placeholder", "")
+                    document.querySelector(".box div.timetable table").setAttribute("s-placeholder", "")
+                    document.querySelector(".box div.timetable table").innerHTML = ""
 
                     fetch(
                         this.apiUrlBuilder(),
@@ -292,7 +296,7 @@
                     }).then(data => {
                         if (data["error"] === true) {
                             makeToast("error", "Error while loading timetable", data["reason"])
-                            document.querySelector(".box div.timetable").setAttribute("s-placeholder-error", "")
+                            document.querySelector(".box div.timetable table").setAttribute("s-placeholder-error", "")
                             throw Error()
                         } else {
                             if (this.grade) {
@@ -328,9 +332,7 @@
                         }
                         return datas
                     }).then(data => {
-                        let table = document.createElement("table")
-                        table.style.setProperty("width", "100%")
-                        table.style.setProperty("height", "calc(100% - 80px)")
+                        let table = document.querySelector(".box div.timetable table")
                         let theadr = document.createElement("tr")
                         theadr.appendChild(document.createElement("th"))
                         for (let i of this.weekdayArray) {
@@ -344,6 +346,7 @@
                                 if (Array.from(r.childNodes).filter(a => a.tagName !== "TH" && a.style.order === y.toString()).length === 0) {
                                     let e = document.createElement("td")
                                     e.style.order = y.toString()
+                                    e.innerHTML = "<!-- no class -->"
                                     this.timetable[i].appendChild(e)
                                 }
                             })
@@ -351,16 +354,8 @@
                         for (let row of this.timetable) {
                             table.appendChild(row)
                         }
-                        let tt = document.querySelector("div.timetable")
-                        try {
-                            tt.removeAttribute("s-placeholder")
-                        } catch (e) {
 
-                        }
-                        if (tt.childElementCount > 1) {
-                            tt.removeChild(tt.lastChild)
-                        }
-                        tt.appendChild(table)
+                        table.removeAttribute("s-placeholder");
                         return data
                     }).catch()
                 }
