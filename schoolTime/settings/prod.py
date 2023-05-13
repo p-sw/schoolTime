@@ -5,4 +5,4 @@ DEBUG = False
 
 SECRET_KEY = token_hex(50)
 
-ALLOWED_HOSTS = ["schultime.sserve.work"]
+ALLOWED_HOSTS = ["schoolti.me"]
