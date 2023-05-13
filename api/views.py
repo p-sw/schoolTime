@@ -61,8 +61,6 @@ async def school_get_time(req):
     grade = req.GET.get("g", "1")
     class_ = req.GET.get("c", "1")
 
-    school_grade = {"고등학교": "his", "중학교": "mis", "초등학교": "els"}[school_grade]
-
     api_call = requests.get(
         f"https://open.neis.go.kr/hub/{school_grade}Timetable"
         f"?Type=json"
