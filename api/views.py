@@ -42,7 +42,7 @@ async def out_response_maker(api_response, result_key):
 
 async def school_search(req):
     name = req.GET.get("name", "")
-    api_call = requests.get(f"https://open.neis.go.kr/hub/schoolInfo?Type=json&KEY={API_KEY}&SCHUL_NM={name}")
+    api_call = requests.get(f"https://open.neis.go.kr/hub/schoolInfo?pSize=15&Type=json&KEY={API_KEY}&SCHUL_NM={name}")
     return await out_response_maker(api_call, "schoolInfo")
 
 
@@ -71,6 +71,7 @@ async def school_get_time(req):
         f"&CLASS_NM={class_}"
         f"&TI_FROM_YMD={from_time}"
         f"&TI_TO_YMD={to_time}"
+        f"&pSize=15"
     )
     return await out_response_maker(api_call, f"{school_grade}Timetable")
 
@@ -84,7 +85,7 @@ async def school_get_meal(req):
     meal_date = req.GET.get("date", datetime.now(tz=TIMEZONE).strftime("%Y%m%d"))
 
     api_call = requests.get(
-        f"https://open.neis.go.kr/hub/mealServiceDietInfo?KEY={API_KEY}&Type=json"
+        f"https://open.neis.go.kr/hub/mealServiceDietInfo?KEY={API_KEY}&Type=json&pSize=15"
         f"&ATPT_OFCDC_SC_CODE={edu_govern_code}"
         f"&SD_SCHUL_CODE={school_code}"
         f"&MLSV_YMD={meal_date}"
