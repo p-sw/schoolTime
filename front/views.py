@@ -1,8 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpRequest
 
 
 async def index(req):
+    cookies = req.COOKIES.keys()
+    if 'schoolKind' in cookies and 'eduGovernCode' in cookies and 'schoolCode' in cookies:
+        return redirect("front:time")
     return render(req, "index.html")
 
 
